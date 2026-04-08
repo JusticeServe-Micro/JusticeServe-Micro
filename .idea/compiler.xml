@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for notification-service" enabled="true">
+      <profile name="Annotation profile for hearing-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -15,11 +15,11 @@
         <module name="api-gateway" />
         <module name="report-service" />
         <module name="judgment-service" />
-        <module name="compliance-service" />
         <module name="identity-service" />
         <module name="eureka-server" />
-        <module name="notification-service" />
+        <module name="compliance-service" />
         <module name="hearing-service" />
+        <module name="notification-service" />
       </profile>
     </annotationProcessing>
   </component>
