@@ -3,7 +3,16 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for notification-service" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
+        <module name="config-server" />
+        <module name="identity-service" />
+        <module name="eureka-server" />
+      </profile>
+      <profile name="Annotation profile for citizen-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -18,30 +27,21 @@
         <module name="notification-service" />
         <module name="hearing-service" />
       </profile>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
-        <module name="config-server" />
-        <module name="identity-service" />
-        <module name="eureka-server" />
-      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="api-gateway" options="-parameters" />
-      <module name="case-service" options="-parameters" />
+      <module name="api-gateway" options="" />
+      <module name="case-service" options="" />
       <module name="citizen-service" options="-parameters" />
-      <module name="compliance-service" options="-parameters" />
-      <module name="config-server" options="-parameters" />
-      <module name="eureka-server" options="-parameters" />
-      <module name="hearing-service" options="-parameters" />
-      <module name="identity-service" options="-parameters" />
-      <module name="judgment-service" options="-parameters" />
-      <module name="notification-service" options="-parameters" />
-      <module name="report-service" options="-parameters" />
+      <module name="compliance-service" options="" />
+      <module name="config-server" options="" />
+      <module name="eureka-server" options="" />
+      <module name="hearing-service" options="" />
+      <module name="identity-service" options="" />
+      <module name="judgment-service" options="" />
+      <module name="notification-service" options="" />
+      <module name="report-service" options="" />
     </option>
   </component>
 </project>
