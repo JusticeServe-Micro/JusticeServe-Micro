@@ -1,4 +1,4 @@
-package com.justiceserve.judgmentservice.exception;
+package com.justiceserve.notificationservice.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
