@@ -1,4 +1,4 @@
-package com.justiceserve.judgmentservice.security;
+package com.justiceserve.notificationservice.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
