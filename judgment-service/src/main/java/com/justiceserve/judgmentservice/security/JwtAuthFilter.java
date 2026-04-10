@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         String userId = request.getHeader("X-User-Id");
-        String role   = request.getHeader("X-User-Role");
-        String email  = request.getHeader("X-User-Email");
+        String role = request.getHeader("X-User-Role");
+        String email = request.getHeader("X-User-Email");
 
         if (StringUtils.hasText(userId) && StringUtils.hasText(role)) {
             var authority = new SimpleGrantedAuthority("ROLE_" + role);

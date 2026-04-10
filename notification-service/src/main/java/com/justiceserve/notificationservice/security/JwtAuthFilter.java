@@ -1,4 +1,4 @@
-package com.justiceserve.identityservice.security;
+package com.justiceserve.notificationservice.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,18 +20,22 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-            throws ServletException, IOException {
-        String userId = req.getHeader("X-User-Id");
-        String role = req.getHeader("X-User-Role");
-        String email = req.getHeader("X-User-Email");
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+        String userId = request.getHeader("X-User-Id");
+        String role = request.getHeader("X-User-Role");
+        String email = request.getHeader("X-User-Email");
+
         if (StringUtils.hasText(userId) && StringUtils.hasText(role)) {
-            var auth = new UsernamePasswordAuthenticationToken(
-                    email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+            var authority = new SimpleGrantedAuthority("ROLE_" + role);
+            var auth = new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.debug("Auth — userId={}, role={}", userId, role);
+            log.debug("Auth set — userId={{}}, role={{}}", userId, role);
         }
-        chain.doFilter(req, res);
+
+        chain.doFilter(request, response);
     }
 }

@@ -56,15 +56,15 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     .getPayload();
 
             String userId = String.valueOf(claims.get("userId"));
-            String role   = String.valueOf(claims.get("role"));
-            String email  = claims.getSubject();
+            String role = String.valueOf(claims.get("role"));
+            String email = claims.getSubject();
 
             log.debug("JWT OK — userId={}, role={}", userId, role);
 
             ServerWebExchange enriched = exchange.mutate()
                     .request(r -> r
-                            .header("X-User-Id",    userId)
-                            .header("X-User-Role",  role)
+                            .header("X-User-Id", userId)
+                            .header("X-User-Role", role)
                             .header("X-User-Email", email))
                     .build();
 
@@ -78,5 +78,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public int getOrder() { return -1; }
+    public int getOrder() {
+        return -1;
+    }
 }
