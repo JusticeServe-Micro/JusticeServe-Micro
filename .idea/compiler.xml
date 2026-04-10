@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="case-service" />
-        <module name="eureka-server" />
         <module name="config-server" />
+        <module name="citizen-service" />
+        <module name="eureka-server" />
       </profile>
       <profile name="Annotation profile for report-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -18,7 +19,6 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
         </processorPath>
-        <module name="citizen-service" />
         <module name="api-gateway" />
         <module name="report-service" />
         <module name="judgment-service" />
