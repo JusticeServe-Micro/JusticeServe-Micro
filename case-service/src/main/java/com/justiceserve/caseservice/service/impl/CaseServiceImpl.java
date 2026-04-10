@@ -139,6 +139,7 @@ public class CaseServiceImpl implements CaseService {
         } catch (BadRequestException e) { throw e; }
         catch (Exception e) { log.warn("Could not verify/notify lawyer: {}", e.getMessage()); }
         c.setLawyerId(lawyerId);
+
         return CaseResponse.from(caseRepo.save(c));
     }
 
