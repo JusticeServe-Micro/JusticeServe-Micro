@@ -8,9 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
-/**
- * ReportController — Member M6
- */
+
 @RestController @RequestMapping("/api/reports") @RequiredArgsConstructor
 @Tag(name = "Reports & Analytics")
 public class ReportController {
