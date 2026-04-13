@@ -13,11 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Case service implementation.
- * Only tables owned by this service: cases, case_documents.
- * Cross-service data (citizen name, lawyer name, judge name) fetched via Feign.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,7 +23,7 @@ public class CaseServiceImpl implements CaseService {
     private final CitizenFeignClient citizenClient;
     private final IdentityFeignClient identityClient;
     private final NotificationFeignClient notifClient;
-    private final AuditLogFeignClient auditClient;
+    private final AuditFeignClient auditClient;
 
     @Override
     @Transactional
