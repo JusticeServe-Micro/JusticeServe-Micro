@@ -3,6 +3,7 @@ package com.justiceserve.citizenservice.service.impl;
 import com.justiceserve.citizenservice.dto.*;
 import com.justiceserve.citizenservice.entity.*;
 import com.justiceserve.citizenservice.exception.*;
+import com.justiceserve.citizenservice.feign.AuditFeignClient;
 import com.justiceserve.citizenservice.feign.IdentityFeignClient;
 import com.justiceserve.citizenservice.repository.*;
 import com.justiceserve.citizenservice.service.CitizenService;
