@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 @Configuration
@@ -22,21 +21,26 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthFilter jwtAuthFilter;
+
     @Value("${app.cors.allowed-origins:http://localhost:4200}")
     private String allowedOrigin;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .cors(c -> c.configurationSource(corsConfigurationSource()))
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a
-                        // POST /api/notifications is called by other services via Feign without user JWT
-                        // POST /api/notifications/internal is a named internal alias
-                        .requestMatchers("/api/notifications", "/api/notifications/internal",
-                                "/swagger-ui/**", "/api-docs/**",
-                                "/v3/api-docs/**", "/actuator/**").permitAll()
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Public: health checks by Eureka + internal service-to-service calls
+                        .requestMatchers("/actuator/**",
+                                "/api/audit-logs/internal",
+                                "/api/notifications/internal"
+                        )
+                        .permitAll()
+                        // Everything else requires a valid JWT
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
