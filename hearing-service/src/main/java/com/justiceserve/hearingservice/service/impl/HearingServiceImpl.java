@@ -21,9 +21,9 @@ public class HearingServiceImpl implements HearingService {
 
     private final HearingRepository hearingRepo;
     private final ProceedingRepository proceedingRepo;
-    private final IdentityFeignClient identityClient;   // fetches judge from identity-service
+    private final IdentityFeignClient identityClient;
     private final NotificationFeignClient notifClient;
-    private final AuditLogFeignClient auditClient;
+    private final AuditFeignClient auditClient;
     private final CaseFeignClient caseClient;
 
     @Override
