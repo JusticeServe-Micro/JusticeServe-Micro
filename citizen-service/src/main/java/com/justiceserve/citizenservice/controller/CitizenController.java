@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-/**
- * Module 2.2 — Citizen Registration & Profile Management
- */
+
 @RestController @RequestMapping("/api/citizens") @RequiredArgsConstructor
 @Tag(name = "2.2 Citizen Management")
 public class CitizenController {
