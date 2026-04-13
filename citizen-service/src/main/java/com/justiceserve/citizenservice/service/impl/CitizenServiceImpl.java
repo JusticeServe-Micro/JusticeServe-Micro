@@ -24,7 +24,7 @@ public class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenResponse createCitizen(CitizenRequest req) {
-
+        // Verify the user exists in identity-service via Feign — no local users table
         try {
             var user = identityClient.getUserById(req.getUserId());
             if (user == null || user.userId() == null)
