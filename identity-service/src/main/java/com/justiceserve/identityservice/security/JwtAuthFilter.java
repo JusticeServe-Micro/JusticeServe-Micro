@@ -15,21 +15,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-/**
- * Reads X-User-Id/Role/Email headers forwarded by API Gateway.
- * Sets SecurityContext — no JWT re-validation needed (Gateway already did it).
- */
-@Slf4j @Component @RequiredArgsConstructor
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
         String userId = req.getHeader("X-User-Id");
-        String role   = req.getHeader("X-User-Role");
-        String email  = req.getHeader("X-User-Email");
+        String role = req.getHeader("X-User-Role");
+        String email = req.getHeader("X-User-Email");
         if (StringUtils.hasText(userId) && StringUtils.hasText(role)) {
             var auth = new UsernamePasswordAuthenticationToken(
-                email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                    email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
             SecurityContextHolder.getContext().setAuthentication(auth);
             log.debug("Auth — userId={}, role={}", userId, role);
         }

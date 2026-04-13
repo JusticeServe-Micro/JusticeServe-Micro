@@ -22,42 +22,63 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
 /**
  * Identity service has FULL SecurityConfig because it IS the auth service.
  * Needs AuthenticationManager+BCrypt to verify login passwords.
  * All other services use lighter SecurityConfig (reads gateway headers).
  * NOTE: Spring Security default password in console is DISABLED — we use JWT.
  */
-@Configuration @EnableWebSecurity @EnableMethodSecurity @RequiredArgsConstructor
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
-    @Value("${app.cors.allowed-origins:http://localhost:4200}") private String allowedOrigin;
+    @Value("${app.cors.allowed-origins:http://localhost:4200}")
+    private String allowedOrigin;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .cors(c -> c.configurationSource(cors()))
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(a -> a
-                .requestMatchers("/api/auth/**","/swagger-ui/**","/api-docs/**","/v3/api-docs/**","/actuator/**")
-                .permitAll()
-                .anyRequest().authenticated())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(c -> c.configurationSource(cors()))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**", "/actuator/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    @Bean public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(12); }
-    @Bean public DaoAuthenticationProvider authProvider() {
-        var p = new DaoAuthenticationProvider();
-        p.setUserDetailsService(userDetailsService); p.setPasswordEncoder(passwordEncoder()); return p;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
     }
-    @Bean public AuthenticationManager authManager(AuthenticationConfiguration c) throws Exception { return c.getAuthenticationManager(); }
-    @Bean public CorsConfigurationSource cors() {
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        var p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(userDetailsService);
+        p.setPasswordEncoder(passwordEncoder());
+        return p;
+    }
+
+    @Bean
+    public AuthenticationManager authManager(AuthenticationConfiguration c) throws Exception {
+        return c.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource cors() {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(List.of(allowedOrigin));
-        cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
-        cfg.setAllowedHeaders(List.of("*")); cfg.setAllowCredentials(true);
+        cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));
+        cfg.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
-        src.registerCorsConfiguration("/**", cfg); return src;
+        src.registerCorsConfiguration("/**", cfg);
+        return src;
     }
 }
