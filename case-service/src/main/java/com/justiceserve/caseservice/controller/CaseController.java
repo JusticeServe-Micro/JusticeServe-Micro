@@ -4,7 +4,6 @@ import com.justiceserve.caseservice.dto.*;
 import com.justiceserve.caseservice.entity.Case;
 import com.justiceserve.caseservice.entity.CaseDocument;
 import com.justiceserve.caseservice.service.CaseService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cases")
 @RequiredArgsConstructor
-@Tag(name = "Case Management")
 public class CaseController {
 
     private final CaseService service;
@@ -29,16 +27,13 @@ public class CaseController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','COMPLIANCE','AUDITOR')")
-    public ResponseEntity<List<CaseResponse>> getAll()
-    { return ResponseEntity.ok(service.getAllCases()); }
+    public ResponseEntity<List<CaseResponse>> getAll() { return ResponseEntity.ok(service.getAllCases()); }
 
     @GetMapping("/{id}")
     public ResponseEntity<CaseResponse> getById(@PathVariable Long id) { return ResponseEntity.ok(service.getCaseById(id)); }
 
     @GetMapping("/citizen/{citizenId}")
-    public ResponseEntity<List<CaseResponse>> getByCitizen(@PathVariable Long citizenId) {
-        return ResponseEntity.ok(service.getCasesByCitizen(citizenId));
-    }
+    public ResponseEntity<List<CaseResponse>> getByCitizen(@PathVariable Long citizenId) { return ResponseEntity.ok(service.getCasesByCitizen(citizenId)); }
 
     @GetMapping("/lawyer/{lawyerId}")
     public ResponseEntity<List<CaseResponse>> getByLawyer(@PathVariable Long lawyerId) { return ResponseEntity.ok(service.getCasesByLawyer(lawyerId)); }
