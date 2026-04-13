@@ -20,11 +20,7 @@ public class NotificationRequest {
     private Notification.NotificationCategory category;
 
     @JsonCreator
-    public NotificationRequest(
-            @JsonProperty("userId") Long userId,
-            @JsonProperty("entityId") Long entityId,
-            @JsonProperty("message") String message,
-            @JsonProperty("category") Object category) {
+    public NotificationRequest(@JsonProperty("userId") Long userId, @JsonProperty("entityId") Long entityId, @JsonProperty("message") String message, @JsonProperty("category") Object category) {
         this.userId = userId;
         this.entityId = entityId;
         this.message = (String) message;

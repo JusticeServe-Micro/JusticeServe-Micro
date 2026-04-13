@@ -3,7 +3,6 @@ package com.justiceserve.identityservice.controller;
 import com.justiceserve.identityservice.dto.UserResponse;
 import com.justiceserve.identityservice.entity.User;
 import com.justiceserve.identityservice.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Tag(name = "2.1 User Management")
 public class UserController {
     private final UserService service;
 

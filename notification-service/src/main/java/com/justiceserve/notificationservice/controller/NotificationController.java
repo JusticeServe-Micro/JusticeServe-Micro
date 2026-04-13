@@ -3,7 +3,6 @@ package com.justiceserve.notificationservice.controller;
 import com.justiceserve.notificationservice.dto.NotificationRequest;
 import com.justiceserve.notificationservice.dto.NotificationResponse;
 import com.justiceserve.notificationservice.service.NotificationService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
-@Tag(name = "Notifications")
 public class NotificationController {
     private final NotificationService service;
 

@@ -1,7 +1,6 @@
 package com.justiceserve.notificationservice.service.impl;
 
-import com.justiceserve.notificationservice.dto.NotificationRequest;
-import com.justiceserve.notificationservice.dto.NotificationResponse;
+import com.justiceserve.notificationservice.dto.*;
 import com.justiceserve.notificationservice.entity.Notification;
 import com.justiceserve.notificationservice.exception.ResourceNotFoundException;
 import com.justiceserve.notificationservice.repository.NotificationRepository;
