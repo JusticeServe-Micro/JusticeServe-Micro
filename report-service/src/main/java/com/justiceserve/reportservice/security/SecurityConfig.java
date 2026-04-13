@@ -16,11 +16,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
-/**
- * SecurityConfig for reportservice.
- * JWT is validated in the API Gateway — this service trusts the X-User-* headers.
- * Still uses Spring Security for @PreAuthorize method-level RBAC.
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -39,8 +34,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**",
-                                "/v3/api-docs/**", "/actuator/**", "/api/files/**").permitAll()
+                        // Public: health checks by Eureka + internal service-to-service calls
+                        .requestMatchers("/actuator/**",
+                                "/api/audit-logs/internal",
+                                "/api/notifications/internal"
+                        )
+                        .permitAll()
+                        // Everything else requires a valid JWT
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -50,7 +50,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(allowedOrigin));
-        config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
