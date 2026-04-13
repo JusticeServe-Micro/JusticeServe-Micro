@@ -19,7 +19,6 @@ public class FeignClientConfig {
     public static class JwtForwardingInterceptor implements RequestInterceptor {
         @Override
         public void apply(RequestTemplate template) {
-            // Get the current incoming HTTP request
             var requestAttributes = RequestContextHolder.getRequestAttributes();
             if (requestAttributes instanceof ServletRequestAttributes attrs) {
                 HttpServletRequest request = attrs.getRequest();
