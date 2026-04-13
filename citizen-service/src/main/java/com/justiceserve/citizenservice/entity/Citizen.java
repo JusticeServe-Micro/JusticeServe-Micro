@@ -5,12 +5,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Citizen profile — stored ONLY in justice-serve-citizen database.
- * userId is a plain Long column referencing User.userId in identity-service.
- * NO @Entity User class here — no local users table created.
- * Data is fetched from identity-service via Feign when needed.
- */
 @Entity
 @Table(name = "citizens")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
