@@ -16,6 +16,18 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
+/**
+ * SecurityConfig for notificationservice.
+ * <p>
+ * All endpoints require a valid JWT (validated in JwtAuthFilter).
+ * The API Gateway also validates JWT — this is a second layer of defense
+ * preventing direct access to this service with fake headers.
+ * <p>
+ * Internal endpoints (/api/audit-logs/internal, /api/notifications/internal)
+ * are permitted because they are called service-to-service and the calling
+ * service's FeignClientInterceptor forwards the JWT anyway.
+ * Actuator is permitted for health checks by Eureka.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,20 +41,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // Public: health checks by Eureka + internal service-to-service calls
-                        .requestMatchers("/actuator/**",
-                                "/api/audit-logs/internal",
-                                "/api/notifications/internal"
-                        )
-                        .permitAll()
-                        // Everything else requires a valid JWT
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(corsConfigurationSource())).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(auth -> auth
+                // Public: health checks by Eureka + internal service-to-service calls
+                .requestMatchers("/actuator/**", "/api/audit-logs/internal", "/api/notifications/internal").permitAll()
+                // Everything else requires a valid JWT
+                .anyRequest().authenticated()).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

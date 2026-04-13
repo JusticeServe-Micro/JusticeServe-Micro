@@ -1,8 +1,7 @@
 package com.justiceserve.identityservice.security;
 
 import com.justiceserve.identityservice.entity.User;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

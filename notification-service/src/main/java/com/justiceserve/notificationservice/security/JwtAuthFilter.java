@@ -17,10 +17,27 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * JwtAuthFilter — validates JWT on EVERY request hitting this service directly.
+ * <p>
+ * WHY: Even if request comes through API Gateway (which also validates JWT),
+ * a bad actor could call this service directly with fake X-User-* headers
+ * and bypass security. This filter validates the JWT signature itself
+ * as a second layer of defense.
+ * <p>
+ * Flow:
+ * 1. Read Authorization: Bearer <token> header
+ * 2. Validate JWT signature with the shared secret
+ * 3. Extract userId, role, email from JWT claims
+ * 4. Set Spring SecurityContext so @PreAuthorize works
+ * <p>
+ * Internal Feign calls (audit-logs/internal, notifications/internal) bypass this.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -30,9 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // Skip JWT validation for public paths
         String path = request.getRequestURI();
         boolean isPublic = path.startsWith("/actuator");
@@ -57,15 +72,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-            Claims claims = Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
 
             String userId = String.valueOf(claims.get("userId"));
-            String role   = String.valueOf(claims.get("role"));
-            String email  = claims.getSubject();
+            String role = String.valueOf(claims.get("role"));
+            String email = claims.getSubject();
 
             if (StringUtils.hasText(userId) && StringUtils.hasText(role)) {
                 var authority = new SimpleGrantedAuthority("ROLE_" + role);
