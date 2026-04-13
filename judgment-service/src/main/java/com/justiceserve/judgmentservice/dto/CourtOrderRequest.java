@@ -1,5 +1,4 @@
 package com.justiceserve.judgmentservice.dto;
-
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -7,8 +6,10 @@ import lombok.Data;
 public class CourtOrderRequest {
     @NotNull
     private Long caseId;
+
     @NotNull
     private Long judgeId;
+
     private Long citizenUserId;
     private Long lawyerUserId;
     private String description;

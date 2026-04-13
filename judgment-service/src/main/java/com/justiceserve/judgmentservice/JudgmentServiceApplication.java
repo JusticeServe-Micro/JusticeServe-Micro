@@ -8,5 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableFeignClients
 public class JudgmentServiceApplication {
-	public static void main(String[] args) { SpringApplication.run(JudgmentServiceApplication.class, args); }
+	public static void main(String[] args) {
+		SpringApplication.run(JudgmentServiceApplication.class, args);
+	}
 }
