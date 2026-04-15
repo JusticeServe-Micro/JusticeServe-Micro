@@ -30,6 +30,5 @@ public interface CaseFeignClient {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new CaseResponse());
         }
-
     }
 }
