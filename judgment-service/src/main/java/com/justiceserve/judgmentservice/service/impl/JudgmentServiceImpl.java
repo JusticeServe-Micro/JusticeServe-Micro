@@ -26,23 +26,63 @@ public class JudgmentServiceImpl implements JudgmentService {
     private final AuditFeignClient auditClient;
     private final CaseFeignClient caseClient;
 
+//    @Transactional
+//    public JudgmentResponse recordJudgment(JudgmentRequest req) {
+//        log.info("Recording judgment caseId={}", req.getCaseId());
+//        Judgment j = Judgment.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
+//                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
+//                .caseTitle(req.getCaseTitle()).summary(req.getSummary()).build();
+//        Judgment saved = judgmentRepo.save(j);
+//        try {
+//            caseClient.updateStatus(req.getCaseId(), "JUDGMENT_PENDING");
+//        } catch (Exception e) {
+//            log.warn("Case update failed: {}", e.getMessage());
+//        }
+//        audit(req.getJudgeId(), "JUDGMENT_RECORDED", "Judgment:" + saved.getJudgmentId() + " (DRAFT) Case:" + req.getCaseId());
+//        if (req.getCitizenUserId() != null)
+//            notify(req.getCitizenUserId(), saved.getJudgmentId(), "JUDGMENT", "A draft judgment was recorded for your case \"" + req.getCaseTitle() + "\"");
+//        return JudgmentResponse.from(saved);
+//    }
+
     @Transactional
     public JudgmentResponse recordJudgment(JudgmentRequest req) {
         log.info("Recording judgment caseId={}", req.getCaseId());
-        Judgment j = Judgment.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
-                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
-                .caseTitle(req.getCaseTitle()).summary(req.getSummary()).build();
+
+        // Check if case exists
+        ResponseEntity<CaseResponse> caseResp = caseClient.getById(req.getCaseId());
+        if (caseResp.getStatusCode() == HttpStatus.NOT_FOUND || caseResp.getBody() == null) {
+            throw new ResourceNotFoundException("No case found with id: " + req.getCaseId());
+        }
+
+        // Proceed with saving the judgment
+        Judgment j = Judgment.builder()
+                .caseId(req.getCaseId())
+                .judgeId(req.getJudgeId())
+                .citizenUserId(req.getCitizenUserId())
+                .lawyerUserId(req.getLawyerUserId())
+                .caseTitle(req.getCaseTitle())
+                .summary(req.getSummary())
+                .build();
+
         Judgment saved = judgmentRepo.save(j);
+
         try {
             caseClient.updateStatus(req.getCaseId(), "JUDGMENT_PENDING");
         } catch (Exception e) {
             log.warn("Case update failed: {}", e.getMessage());
         }
-        audit(req.getJudgeId(), "JUDGMENT_RECORDED", "Judgment:" + saved.getJudgmentId() + " (DRAFT) Case:" + req.getCaseId());
-        if (req.getCitizenUserId() != null)
-            notify(req.getCitizenUserId(), saved.getJudgmentId(), "JUDGMENT", "A draft judgment was recorded for your case \"" + req.getCaseTitle() + "\"");
+
+        audit(req.getJudgeId(), "JUDGMENT_RECORDED",
+                "Judgment:" + saved.getJudgmentId() + " (DRAFT) Case:" + req.getCaseId());
+
+        if (req.getCitizenUserId() != null) {
+            notify(req.getCitizenUserId(), saved.getJudgmentId(), "JUDGMENT",
+                    "A draft judgment was recorded for your case \"" + req.getCaseTitle() + "\"");
+        }
+
         return JudgmentResponse.from(saved);
     }
+
 
     public JudgmentResponse getById(Long id) {
         return JudgmentResponse.from(judgmentRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Judgment not found: " + id)));
