@@ -3,7 +3,6 @@ package com.justiceserve.hearingservice.controller;
 import com.justiceserve.hearingservice.dto.*;
 import com.justiceserve.hearingservice.entity.Hearing;
 import com.justiceserve.hearingservice.service.HearingService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hearings")
 @RequiredArgsConstructor
-@Tag(name = "Hearing Management")
 public class HearingController {
 
     private final HearingService service;

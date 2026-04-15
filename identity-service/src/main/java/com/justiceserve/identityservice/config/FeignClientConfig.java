@@ -8,19 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-/**
- * FeignClientInterceptor — forwards the JWT from the current request
- * to all outgoing Feign calls made by this service.
- * <p>
- * WHY: When case-service calls citizen-service via Feign,
- * citizen-service's JwtAuthFilter requires a valid JWT.
- * Without this interceptor, the Feign call has no Authorization header
- * and would be rejected as unauthenticated.
- * <p>
- * HOW: Reads the Authorization header from the incoming HTTP request
- * (put there by the API Gateway via the original client's JWT)
- * and forwards it to every outgoing Feign call automatically.
- */
 @Configuration
 public class FeignClientConfig {
 

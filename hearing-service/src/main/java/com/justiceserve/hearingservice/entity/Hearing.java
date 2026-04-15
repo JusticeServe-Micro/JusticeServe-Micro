@@ -15,12 +15,15 @@ public class Hearing {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long hearingId;
 
+    /** FK to Case in case-service — plain Long, no local cases table */
     @Column(nullable = false)
     private Long caseId;
 
+    /** FK to User (JUDGE) in identity-service — plain Long, no local users table */
     @Column(nullable = false)
     private Long judgeId;
 
+    /** Cached judge name to avoid Feign on every read — updated at schedule time */
     @Column(length = 100)
     private String judgeName;
 

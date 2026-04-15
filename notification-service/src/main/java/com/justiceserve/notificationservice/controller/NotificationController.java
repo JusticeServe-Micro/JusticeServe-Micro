@@ -1,7 +1,6 @@
 package com.justiceserve.notificationservice.controller;
 
-import com.justiceserve.notificationservice.dto.NotificationRequest;
-import com.justiceserve.notificationservice.dto.NotificationResponse;
+import com.justiceserve.notificationservice.dto.*;
 import com.justiceserve.notificationservice.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,9 @@ import java.util.List;
 public class NotificationController {
     private final NotificationService service;
 
+    /**
+     * Internal endpoint — called by other microservices via Feign (no auth required).
+     */
     @PostMapping("/internal")
     public ResponseEntity<NotificationResponse> sendInternal(@RequestBody NotificationRequest req) {
         return ResponseEntity.ok(service.send(req));

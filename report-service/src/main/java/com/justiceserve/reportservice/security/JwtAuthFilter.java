@@ -21,6 +21,22 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * JwtAuthFilter — validates JWT on EVERY request hitting this service directly.
+ *
+ * WHY: Even if request comes through API Gateway (which also validates JWT),
+ * a bad actor could call this service directly with fake X-User-* headers
+ * and bypass security. This filter validates the JWT signature itself
+ * as a second layer of defense.
+ *
+ * Flow:
+ *  1. Read Authorization: Bearer <token> header
+ *  2. Validate JWT signature with the shared secret
+ *  3. Extract userId, role, email from JWT claims
+ *  4. Set Spring SecurityContext so @PreAuthorize works
+ *
+ * Internal Feign calls (audit-logs/internal, notifications/internal) bypass this.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

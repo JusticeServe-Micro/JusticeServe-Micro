@@ -122,19 +122,52 @@ public class CaseServiceImpl implements CaseService {
         return CaseResponse.from(updated);
     }
 
+    //    @Override
+//    @Transactional
+//    public CaseResponse assignLawyer(Long caseId, Long lawyerId) {
+//        Case c = caseRepo.findById(caseId).orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+//        IdentityFeignClient.UserDto lawyer = null;
+//        CitizenFeignClient.CitizenDto citizen = null;
+//        try {
+//             lawyer = identityClient.getUserById(lawyerId);
+//             citizen = citizenClient.getCitizenById(c.getCitizenId());
+//            if (!"LAWYER".equals(lawyer.role()))
+//                throw new BadRequestException("User is not a LAWYER: " + lawyerId);
+//            notify(lawyerId, caseId, "CASE", "You are assigned as lawyer for Case #" + caseId + ": \"" + c.getTitle() + "\"");
+//        } catch (BadRequestException e) { throw e; }
+//        catch (Exception e) { log.warn("Could not verify/notify lawyer: {}", e.getMessage()); }
+//        c.setLawyerId(lawyerId);
+//        CaseResponse caseResponse = CaseResponse.from(caseRepo.save(c));
+//        caseResponse.setCitizenName(citizen.name());
+//        caseResponse.setLawyerName(lawyer.name());
+//
+//        return caseResponse;
+//    }
     @Override
     @Transactional
     public CaseResponse assignLawyer(Long caseId, Long lawyerId) {
-        Case c = caseRepo.findById(caseId).orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+        Case c = caseRepo.findById(caseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+
         try {
-            var lawyer = identityClient.getUserById(lawyerId);
-            if (!"LAWYER".equals(lawyer.role()))
+            var lawyerDto = identityClient.getUserById(lawyerId);
+            if (lawyerDto == null || !"LAWYER".equals(lawyerDto.role())) {
                 throw new BadRequestException("User is not a LAWYER: " + lawyerId);
-            notify(lawyerId, caseId, "CASE", "You are assigned as lawyer for Case #" + caseId + ": \"" + c.getTitle() + "\"");
-        } catch (BadRequestException e) { throw e; }
-        catch (Exception e) { log.warn("Could not verify/notify lawyer: {}", e.getMessage()); }
-        c.setLawyerId(lawyerId);
-        return CaseResponse.from(caseRepo.save(c));
+            }
+
+            c.setLawyerId(lawyerId);
+            Case saved = caseRepo.save(c);
+
+            notify(lawyerId, caseId, "CASE", "You are assigned as lawyer for Case #" + caseId);
+
+            return enrich(saved); // Safely fetches names
+
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Lawyer assignment failed: {}", e.getMessage());
+            return enrich(c);
+        }
     }
 
     @Override
@@ -149,21 +182,57 @@ public class CaseServiceImpl implements CaseService {
         return CaseResponse.from(caseRepo.save(c));
     }
 
+    //    @Override
+//    @Transactional
+//    public CaseResponse assignJudge(Long caseId, Long judgeId) {
+//        Case c = caseRepo.findById(caseId).orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+//        IdentityFeignClient.UserDto judge = null;
+//        try {
+//             judge = identityClient.getUserById(judgeId);
+//            if (!"JUDGE".equals(judge.role()))
+//                throw new BadRequestException("User is not a JUDGE: " + judgeId);
+//            notify(judgeId, caseId, "CASE", "You are assigned as Judge for Case #" + caseId + ": \"" + c.getTitle() + "\"");
+//            audit(judgeId, "JUDGE_ASSIGNED", "Case:" + caseId);
+//        } catch (BadRequestException e) { throw e; }
+//        catch (Exception e) { log.warn("Could not verify/notify judge: {}", e.getMessage()); }
+//        c.setJudgeId(judgeId);
+//        c.setStatus(Case.CaseStatus.ACTIVE);
+//        CaseResponse caseResponse = CaseResponse.from(caseRepo.save(c));
+//        caseResponse.setJudgeName(judge.name());
+//        caseResponse.setLawyerName(identityClient.getUserById(c.getLawyerId()).name());
+//        return caseResponse;
+//    }
     @Override
     @Transactional
     public CaseResponse assignJudge(Long caseId, Long judgeId) {
-        Case c = caseRepo.findById(caseId).orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+        Case c = caseRepo.findById(caseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Case not found: " + caseId));
+
         try {
-            var judge = identityClient.getUserById(judgeId);
-            if (!"JUDGE".equals(judge.role()))
+            var judgeDto = identityClient.getUserById(judgeId);
+            if (judgeDto == null || !"JUDGE".equals(judgeDto.role())) {
                 throw new BadRequestException("User is not a JUDGE: " + judgeId);
-            notify(judgeId, caseId, "CASE", "You are assigned as Judge for Case #" + caseId + ": \"" + c.getTitle() + "\"");
+            }
+
+            // Update Entity
+            c.setJudgeId(judgeId);
+            c.setStatus(Case.CaseStatus.ACTIVE);
+            Case saved = caseRepo.save(c);
+
+            // Async actions
+            notify(judgeId, caseId, "CASE", "You are assigned as Judge for Case #" + caseId);
             audit(judgeId, "JUDGE_ASSIGNED", "Case:" + caseId);
-        } catch (BadRequestException e) { throw e; }
-        catch (Exception e) { log.warn("Could not verify/notify judge: {}", e.getMessage()); }
-        c.setJudgeId(judgeId);
-        c.setStatus(Case.CaseStatus.ACTIVE);
-        return CaseResponse.from(caseRepo.save(c));
+
+            // Use enrich() to safely get Judge, Lawyer, and Citizen names
+            return enrich(saved);
+
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Judge assignment failed: {}", e.getMessage());
+            // If Feign fails, we still return the saved case via enrich (which handles nulls)
+            return enrich(c);
+        }
     }
 
     @Override

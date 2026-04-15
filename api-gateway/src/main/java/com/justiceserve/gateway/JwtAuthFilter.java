@@ -9,6 +9,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
 import java.util.List;
+
 
 @Slf4j
 @Component
@@ -26,23 +28,26 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/",
-            "/actuator",
-            "/swagger-ui",
-            "/api-docs",
-            "/v3/api-docs"
+            "/actuator"
     );
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
+
         String path = exchange.getRequest().getURI().getPath();
 
+        // Allow public paths without JWT
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.warn("Missing/invalid Authorization header — path={}", path);
+            log.warn("Missing/invalid Authorization header for path: {}", path);
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
@@ -56,15 +61,15 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     .getPayload();
 
             String userId = String.valueOf(claims.get("userId"));
-            String role = String.valueOf(claims.get("role"));
-            String email = claims.getSubject();
+            String role   = String.valueOf(claims.get("role"));
+            String email  = claims.getSubject();
 
-            log.debug("JWT OK — userId={}, role={}", userId, role);
+            log.debug("JWT OK — userId={}, role={}, path={}", userId, role, path);
 
             ServerWebExchange enriched = exchange.mutate()
                     .request(r -> r
-                            .header("X-User-Id", userId)
-                            .header("X-User-Role", role)
+                            .header("X-User-Id",    userId)
+                            .header("X-User-Role",  role)
                             .header("X-User-Email", email))
                     .build();
 
@@ -78,7 +83,5 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public int getOrder() {
-        return -1;
-    }
+    public int getOrder() { return -1; }
 }
