@@ -8,6 +8,8 @@ import com.justiceserve.judgmentservice.repository.*;
 import com.justiceserve.judgmentservice.service.JudgmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,19 +75,52 @@ public class JudgmentServiceImpl implements JudgmentService {
         return JudgmentResponse.from(saved);
     }
 
-    @Transactional
-    public CourtOrderResponse issueOrder(CourtOrderRequest req) {
-        CourtOrder o = CourtOrder.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
-                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
-                .description(req.getDescription()).build();
-        CourtOrder saved = orderRepo.save(o);
-        audit(req.getJudgeId(), "COURT_ORDER_ISSUED", "CourtOrder:" + saved.getOrderId() + " Case:" + req.getCaseId());
-        if (req.getCitizenUserId() != null)
-            notify(req.getCitizenUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued for your case.");
-        if (req.getLawyerUserId() != null)
-            notify(req.getLawyerUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued.");
-        return CourtOrderResponse.from(saved);
+//    @Transactional
+//    public CourtOrderResponse issueOrder(CourtOrderRequest req) {
+//        CourtOrder o = CourtOrder.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
+//                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
+//                .description(req.getDescription()).build();
+//        CourtOrder saved = orderRepo.save(o);
+//        audit(req.getJudgeId(), "COURT_ORDER_ISSUED", "CourtOrder:" + saved.getOrderId() + " Case:" + req.getCaseId());
+//        if (req.getCitizenUserId() != null)
+//            notify(req.getCitizenUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued for your case.");
+//        if (req.getLawyerUserId() != null)
+//            notify(req.getLawyerUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued.");
+//        return CourtOrderResponse.from(saved);
+//    }
+@Transactional
+public CourtOrderResponse issueOrder(CourtOrderRequest req) {
+    // Check if case exists
+    ResponseEntity<CaseResponse> caseResp = caseClient.getById(req.getCaseId());
+    if (caseResp.getStatusCode() == HttpStatus.NOT_FOUND || caseResp.getBody() == null) {
+        throw new ResourceNotFoundException("No case found with id: " + req.getCaseId());
     }
+
+    // Proceed with saving the order
+    CourtOrder o = CourtOrder.builder()
+            .caseId(req.getCaseId())
+            .judgeId(req.getJudgeId())
+            .citizenUserId(req.getCitizenUserId())
+            .lawyerUserId(req.getLawyerUserId())
+            .description(req.getDescription())
+            .build();
+
+    CourtOrder saved = orderRepo.save(o);
+
+    audit(req.getJudgeId(), "COURT_ORDER_ISSUED", "CourtOrder:" + saved.getOrderId() + " Case:" + req.getCaseId());
+
+    if (req.getCitizenUserId() != null) {
+        notify(req.getCitizenUserId(), saved.getOrderId(), "JUDGMENT",
+                "Court Order #" + saved.getOrderId() + " issued for your case.");
+    }
+    if (req.getLawyerUserId() != null) {
+        notify(req.getLawyerUserId(), saved.getOrderId(), "JUDGMENT",
+                "Court Order #" + saved.getOrderId() + " issued.");
+    }
+
+    return CourtOrderResponse.from(saved);
+}
+
 
     public CourtOrderResponse getOrderById(Long id) {
         return CourtOrderResponse.from(orderRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found: " + id)));
