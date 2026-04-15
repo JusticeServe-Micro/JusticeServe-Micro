@@ -1,7 +1,6 @@
 package com.justiceserve.complianceservice.controller;
 import com.justiceserve.complianceservice.entity.*;
 import com.justiceserve.complianceservice.repository.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController @RequestMapping("/api") @RequiredArgsConstructor
-@Tag(name = "Compliance & Audits")
 public class ComplianceController {
     private final ComplianceRecordRepository complianceRepo;
     private final AuditRepository auditRepo;

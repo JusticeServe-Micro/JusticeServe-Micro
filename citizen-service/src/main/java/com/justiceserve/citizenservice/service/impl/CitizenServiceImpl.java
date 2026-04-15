@@ -3,6 +3,7 @@ package com.justiceserve.citizenservice.service.impl;
 import com.justiceserve.citizenservice.dto.*;
 import com.justiceserve.citizenservice.entity.*;
 import com.justiceserve.citizenservice.exception.*;
+import com.justiceserve.citizenservice.feign.AuditFeignClient;
 import com.justiceserve.citizenservice.feign.IdentityFeignClient;
 import com.justiceserve.citizenservice.repository.*;
 import com.justiceserve.citizenservice.service.CitizenService;
@@ -23,7 +24,7 @@ public class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenResponse createCitizen(CitizenRequest req) {
-
+        // Verify the user exists in identity-service via Feign — no local users table
         try {
             var user = identityClient.getUserById(req.getUserId());
             if (user == null || user.userId() == null)
