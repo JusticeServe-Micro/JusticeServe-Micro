@@ -2,7 +2,6 @@ package com.justiceserve.judgmentservice.controller;
 import com.justiceserve.judgmentservice.dto.*;
 import com.justiceserve.judgmentservice.entity.CourtOrder;
 import com.justiceserve.judgmentservice.service.impl.JudgmentServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/court-orders")
 @RequiredArgsConstructor
-@Tag(name = "Court Orders")
 public class CourtOrderController {
     private final JudgmentServiceImpl service;
 
