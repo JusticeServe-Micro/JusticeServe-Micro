@@ -20,20 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
-/**
- * Full SecurityConfig for identity-service.
- * This is the ONLY service with AuthenticationManager+BCrypt (needed for login).
- * All other services use lighter SecurityConfig.
- * <p>
- * Public:  /api/auth/** (register + login — no JWT needed)
- * /actuator/** (health checks for Eureka)
- * Private: /api/users/** (admin operations — JWT required)
- * <p>
- * Swagger is REMOVED — use Postman or curl for API testing.
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -59,29 +47,23 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
+    @Bean public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(12); }
 
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
+    @Bean public DaoAuthenticationProvider authProvider() {
         var p = new DaoAuthenticationProvider();
         p.setUserDetailsService(userDetailsService);
         p.setPasswordEncoder(passwordEncoder());
         return p;
     }
 
-    @Bean
-    public AuthenticationManager authManager(AuthenticationConfiguration c) throws Exception {
+    @Bean public AuthenticationManager authManager(AuthenticationConfiguration c) throws Exception {
         return c.getAuthenticationManager();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    @Bean public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(allowedOrigin));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

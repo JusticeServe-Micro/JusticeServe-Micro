@@ -4,13 +4,14 @@ import com.justiceserve.identityservice.dto.UserResponse;
 import com.justiceserve.identityservice.entity.User;
 import com.justiceserve.identityservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -24,14 +25,15 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CITIZEN','JUDGE','CLERK','LAWYER','AUDITOR','COMPLIANCE')")
     public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getUserById(id));
     }
 
     @GetMapping("/role/{role}")
-    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE')")
+    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','CITIZEN')")
     public ResponseEntity<List<UserResponse>> getByRole(@PathVariable User.Role role) {
+        log.error("I am reached Fetching users with role: {}", role);
         return ResponseEntity.ok(service.getUsersByRole(role));
     }
 

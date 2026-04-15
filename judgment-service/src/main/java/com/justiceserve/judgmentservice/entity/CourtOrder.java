@@ -1,6 +1,8 @@
 package com.justiceserve.judgmentservice.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,33 +13,27 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CourtOrder {
-    public enum OrderStatus { ACTIVE, SERVED, EXPIRED }
+    public enum OrderStatus {ACTIVE, SERVED, EXPIRED}
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Long caseId;
-
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Long judgeId;
-
     private Long citizenUserId;
     private Long lawyerUserId;
-    private LocalDate date;
-
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
-
+    private LocalDate date;
     @Enumerated(EnumType.STRING)
-    @Column(nullable=false,length=10)
+    @Column(nullable = false, length = 10)
     private OrderStatus status;
 
     @PrePersist
     public void prePersist() {
-        this.date=LocalDate.now();
-        if (status==null)
-            status=OrderStatus.ACTIVE;
+        this.date = LocalDate.now();
+        if (status == null) status = OrderStatus.ACTIVE;
     }
 }

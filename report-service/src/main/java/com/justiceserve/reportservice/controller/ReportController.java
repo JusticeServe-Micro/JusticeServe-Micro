@@ -1,16 +1,16 @@
 package com.justiceserve.reportservice.controller;
 import com.justiceserve.reportservice.entity.Report;
 import com.justiceserve.reportservice.repository.ReportRepository;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * ReportController — Member M6
+ */
 @RestController @RequestMapping("/api/reports") @RequiredArgsConstructor
-@Tag(name = "Reports & Analytics")
 public class ReportController {
     private final ReportRepository repo;
     @PostMapping("/generate") @PreAuthorize("hasAnyRole('ADMIN','COMPLIANCE','AUDITOR')")

@@ -14,6 +14,7 @@ public interface NotificationFeignClient {
     class NotificationFeignFallback implements NotificationFeignClient {
         @Override
         public void send(Map<String, Object> payload) {
+            // Silently ignore — notification failure must not block main operation
         }
     }
 }

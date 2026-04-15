@@ -33,6 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
+        // Skip JWT validation for public paths
         String path = request.getRequestURI();
         boolean isPublic = path.startsWith("/actuator");
 
@@ -73,9 +74,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 log.debug("JWT validated — userId={}, role={}, path={}", userId, role, request.getRequestURI());
             }
         } catch (Exception e) {
-            log.warn("JWT validation failed for path={}: {}",
-                    request.getRequestURI(),
-                    e.getMessage());
+            log.warn("JWT validation failed for path={}: {}", request.getRequestURI(), e.getMessage());
+            // Don't set authentication — request will fail @PreAuthorize checks
         }
 
         chain.doFilter(request, response);

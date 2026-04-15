@@ -2,7 +2,6 @@ package com.justiceserve.citizenservice.controller;
 import com.justiceserve.citizenservice.dto.*;
 import com.justiceserve.citizenservice.entity.CitizenDocument;
 import com.justiceserve.citizenservice.service.CitizenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController @RequestMapping("/api/citizens") @RequiredArgsConstructor
-@Tag(name = "2.2 Citizen Management")
 public class CitizenController {
     private final CitizenService service;
     @PostMapping @PreAuthorize("hasAnyRole('CITIZEN','ADMIN','CLERK')") public ResponseEntity<CitizenResponse> create(@Valid @RequestBody CitizenRequest req) { return ResponseEntity.ok(service.createCitizen(req)); }

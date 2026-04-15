@@ -11,16 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class NotificationRequest {
-    @NotNull
-    private Long userId;
+    @NotNull  private Long userId;
     private Long entityId;
-    @NotBlank
-    private String message;
-    @NotNull
-    private Notification.NotificationCategory category;
+    @NotBlank private String message;
+    @NotNull  private Notification.NotificationCategory category;
 
     @JsonCreator
-    public NotificationRequest(@JsonProperty("userId") Long userId, @JsonProperty("entityId") Long entityId, @JsonProperty("message") String message, @JsonProperty("category") Object category) {
+    public NotificationRequest(
+            @JsonProperty("userId") Long userId,
+            @JsonProperty("entityId") Long entityId,
+            @JsonProperty("message") String message,
+            @JsonProperty("category") Object category) {
         this.userId = userId;
         this.entityId = entityId;
         this.message = (String) message;

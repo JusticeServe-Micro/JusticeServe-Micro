@@ -8,10 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/**
- * Seeds default users on first boot.
- * Runs only if the email does not already exist.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -33,10 +29,10 @@ public class DataInitializer implements CommandLineRunner {
     private void seedUser(String name, String email, String rawPassword, User.Role role) {
         if (!userRepo.existsByEmail(email)) {
             User u = User.builder()
-                .name(name).email(email)
-                .password(encoder.encode(rawPassword))
-                .role(role).status(User.Status.ACTIVE)
-                .build();
+                    .name(name).email(email)
+                    .password(encoder.encode(rawPassword))
+                    .role(role).status(User.Status.ACTIVE)
+                    .build();
             userRepo.save(u);
             log.info("Seeded user: {} / {} ({})", email, rawPassword, role);
         }
