@@ -1,7 +1,6 @@
 package com.justiceserve.judgmentservice.controller;
 import com.justiceserve.judgmentservice.dto.*;
 import com.justiceserve.judgmentservice.service.impl.JudgmentServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/judgments")
 @RequiredArgsConstructor
-@Tag(name = "Judgment Management")
 public class JudgmentController {
     private final JudgmentServiceImpl service;
 
