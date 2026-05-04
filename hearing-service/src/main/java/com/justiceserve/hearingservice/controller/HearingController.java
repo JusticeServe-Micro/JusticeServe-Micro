@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -24,17 +25,25 @@ public class HearingController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','COMPLIANCE','AUDITOR')")
-    public ResponseEntity<List<HearingResponse>> getAll() { return ResponseEntity.ok(service.getAllHearings()); }
+    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','COMPLIANCE','AUDITOR','LAWYER')")
+    public ResponseEntity<List<HearingResponse>> getAll() {
+        return ResponseEntity.ok(service.getAllHearings());
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HearingResponse> getById(@PathVariable Long id) { return ResponseEntity.ok(service.getHearingById(id)); }
+    public ResponseEntity<HearingResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getHearingById(id));
+    }
 
     @GetMapping("/case/{caseId}")
-    public ResponseEntity<List<HearingResponse>> getByCase(@PathVariable Long caseId) { return ResponseEntity.ok(service.getHearingsByCase(caseId)); }
+    public ResponseEntity<List<HearingResponse>> getByCase(@PathVariable Long caseId) {
+        return ResponseEntity.ok(service.getHearingsByCase(caseId));
+    }
 
     @GetMapping("/judge/{judgeId}")
-    public ResponseEntity<List<HearingResponse>> getByJudge(@PathVariable Long judgeId) { return ResponseEntity.ok(service.getHearingsByJudge(judgeId)); }
+    public ResponseEntity<List<HearingResponse>> getByJudge(@PathVariable Long judgeId) {
+        return ResponseEntity.ok(service.getHearingsByJudge(judgeId));
+    }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN','JUDGE')")

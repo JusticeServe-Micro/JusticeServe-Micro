@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,15 +17,15 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("identity-auth",  r -> r.path("/api/auth/**").uri("lb://identity-service"))
+                .route("identity-auth", r -> r.path("/api/auth/**").uri("lb://identity-service"))
                 .route("identity-users", r -> r.path("/api/users/**").uri("lb://identity-service"))
-                .route("citizen",        r -> r.path("/api/citizens/**").uri("lb://citizen-service"))
-                .route("case",           r -> r.path("/api/cases/**", "/api/files/**").uri("lb://case-service"))
-                .route("hearing",        r -> r.path("/api/hearings/**").uri("lb://hearing-service"))
-                .route("judgment",       r -> r.path("/api/judgments/**", "/api/court-orders/**").uri("lb://judgment-service"))
-                .route("compliance",     r -> r.path("/api/compliance/**", "/api/audits/**", "/api/audit-logs/**").uri("lb://compliance-service"))
-                .route("report",         r -> r.path("/api/reports/**").uri("lb://report-service"))
-                .route("notification",   r -> r.path("/api/notifications/**").uri("lb://notification-service"))
+                .route("citizen", r -> r.path("/api/citizens/**").uri("lb://citizen-service"))
+                .route("case", r -> r.path("/api/cases/**", "/api/files/**").uri("lb://case-service"))
+                .route("hearing", r -> r.path("/api/hearings/**").uri("lb://hearing-service"))
+                .route("judgment", r -> r.path("/api/judgments/**", "/api/court-orders/**").uri("lb://judgment-service"))
+                .route("compliance", r -> r.path("/api/compliance/**", "/api/audits/**", "/api/audit-logs/**").uri("lb://compliance-service"))
+                .route("report", r -> r.path("/api/reports/**").uri("lb://report-service"))
+                .route("notification", r -> r.path("/api/notifications/**").uri("lb://notification-service"))
                 .build();
     }
 

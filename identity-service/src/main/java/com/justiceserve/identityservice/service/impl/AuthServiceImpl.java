@@ -1,4 +1,5 @@
 package com.justiceserve.identityservice.service.impl;
+
 import com.justiceserve.identityservice.dto.*;
 import com.justiceserve.identityservice.entity.User;
 import com.justiceserve.identityservice.exception.BadRequestException;
@@ -12,7 +13,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-@Slf4j @Service @RequiredArgsConstructor
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepo;
     private final PasswordEncoder encoder;
@@ -32,8 +36,11 @@ public class AuthServiceImpl implements AuthService {
                 .status(User.Status.ACTIVE).build();
         user = userRepo.save(user);
         log.info("Registered userId={}", user.getUserId());
-        try { auditClient.log(user.getUserId(), "USER_REGISTERED", "User:"+user.getUserId()+" email="+user.getEmail()); }
-        catch (Exception e) { log.warn("Audit failed: {}", e.getMessage()); }
+        try {
+            auditClient.log(user.getUserId(), "USER_REGISTERED", "User:" + user.getUserId() + " email=" + user.getEmail());
+        } catch (Exception e) {
+            log.warn("Audit failed: {}", e.getMessage());
+        }
         return new AuthResponse(jwtUtils.generateToken(user), user.getUserId(), user.getName(), user.getEmail(), user.getRole().name());
     }
 
@@ -43,8 +50,11 @@ public class AuthServiceImpl implements AuthService {
         authManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
         User user = userRepo.findByEmail(req.getEmail()).orElseThrow(() -> new BadRequestException("User not found"));
         log.info("Login OK userId={}, role={}", user.getUserId(), user.getRole());
-        try { auditClient.log(user.getUserId(), "USER_LOGIN", "User:"+user.getUserId()+" role="+user.getRole()); }
-        catch (Exception e) { log.warn("Audit failed: {}", e.getMessage()); }
+        try {
+            auditClient.log(user.getUserId(), "USER_LOGIN", "User:" + user.getUserId() + " role=" + user.getRole());
+        } catch (Exception e) {
+            log.warn("Audit failed: {}", e.getMessage());
+        }
         return new AuthResponse(jwtUtils.generateToken(user), user.getUserId(), user.getName(), user.getEmail(), user.getRole().name());
     }
 }
