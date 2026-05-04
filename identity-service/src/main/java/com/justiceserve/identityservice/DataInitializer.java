@@ -24,6 +24,7 @@ public class DataInitializer implements CommandLineRunner {
         seedUser("Adv. Mehta",       "lawyer@justiceserve.gov",  "Lawyer@123", User.Role.LAWYER);
         seedUser("Rahul Citizen",    "citizen@justiceserve.gov", "Citizen@123",User.Role.CITIZEN);
         seedUser("Audit Officer",    "audit@justiceserve.gov",   "Audit@123",  User.Role.AUDITOR);
+        seedUser("Compliance Officer",    "compliance@justiceserve.gov",   "Compliance@123",  User.Role.COMPLIANCE);
     }
 
     private void seedUser(String name, String email, String rawPassword, User.Role role) {

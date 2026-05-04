@@ -26,7 +26,7 @@ public class CaseController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','COMPLIANCE','AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','COMPLIANCE','AUDITOR','LAWYER')")
     public ResponseEntity<List<CaseResponse>> getAll() { return ResponseEntity.ok(service.getAllCases()); }
 
     @GetMapping("/{id}")
