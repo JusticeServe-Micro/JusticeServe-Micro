@@ -29,39 +29,39 @@ public class GatewayConfig {
                 .build();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration cfg = new CorsConfiguration();
-//        // Use pattern matching for flexibility (handles trailing slashes etc.)
-//        cfg.setAllowedOriginPatterns(List.of("http://localhost:4200", "http://127.0.0.1:4200"));
-//        cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
-//        cfg.setAllowedHeaders(Arrays.asList("*"));
-//        cfg.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "X-User-Id", "X-User-Role", "X-User-Email"));
-//        cfg.setAllowCredentials(true);
-//        cfg.setMaxAge(3600L); // cache preflight for 1 hour
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", cfg);
-//        return source;
-//    }
-//
-//    @Bean
-//    public org.springframework.web.server.WebFilter corsWebFilter() {
-//        return (exchange, chain) -> {
-//            org.springframework.http.server.reactive.ServerHttpRequest request = exchange.getRequest();
-//            if (org.springframework.http.HttpMethod.OPTIONS.equals(request.getMethod())) {
-//                org.springframework.http.server.reactive.ServerHttpResponse response = exchange.getResponse();
-//                response.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:4200");
-//                response.getHeaders().add("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-//                response.getHeaders().add("Access-Control-Allow-Headers", "*");
-//                response.getHeaders().add("Access-Control-Allow-Credentials", "true");
-//                response.getHeaders().add("Access-Control-Max-Age", "3600");
-//                response.setStatusCode(org.springframework.http.HttpStatus.OK);
-//                return response.setComplete();
-//            }
-//            return chain.filter(exchange);
-//        };
-//    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        // Use pattern matching for flexibility (handles trailing slashes etc.)
+        cfg.setAllowedOriginPatterns(List.of("http://localhost:4200", "http://127.0.0.1:4200"));
+        cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
+        cfg.setAllowedHeaders(Arrays.asList("*"));
+        cfg.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "X-User-Id", "X-User-Role", "X-User-Email"));
+        cfg.setAllowCredentials(true);
+        cfg.setMaxAge(3600L); // cache preflight for 1 hour
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
+    }
+
+    @Bean
+    public org.springframework.web.server.WebFilter corsWebFilter() {
+        return (exchange, chain) -> {
+            org.springframework.http.server.reactive.ServerHttpRequest request = exchange.getRequest();
+            if (org.springframework.http.HttpMethod.OPTIONS.equals(request.getMethod())) {
+                org.springframework.http.server.reactive.ServerHttpResponse response = exchange.getResponse();
+                response.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:4200");
+                response.getHeaders().add("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+                response.getHeaders().add("Access-Control-Allow-Headers", "*");
+                response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+                response.getHeaders().add("Access-Control-Max-Age", "3600");
+                response.setStatusCode(org.springframework.http.HttpStatus.OK);
+                return response.setComplete();
+            }
+            return chain.filter(exchange);
+        };
+    }
 
 
 }
