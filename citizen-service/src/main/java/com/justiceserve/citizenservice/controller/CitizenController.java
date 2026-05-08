@@ -24,7 +24,7 @@ public class CitizenController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CLERK','COMPLIANCE','AUDITOR','LAWYER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CLERK','COMPLIANCE','AUDITOR','LAWYER','CITIZEN')")
     public ResponseEntity<List<CitizenResponse>> getAll() {
         return ResponseEntity.ok(service.getAllCitizens());
     }
