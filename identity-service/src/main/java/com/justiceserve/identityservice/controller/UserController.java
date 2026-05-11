@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/role/{role}")
-    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','CITIZEN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CLERK','JUDGE','CITIZEN','COMPLIANCE','AUDITOR')")
     public ResponseEntity<List<UserResponse>> getByRole(@PathVariable User.Role role) {
         log.error("I am reached Fetching users with role: {}", role);
         return ResponseEntity.ok(service.getUsersByRole(role));
