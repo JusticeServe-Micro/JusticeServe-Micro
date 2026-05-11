@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,8 +23,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Seed audits
-        Audit audit1 = seedAudit(6L, "Case Filing Audit", "Findings on case filing process", Audit.AuditStatus.OPEN);
-        Audit audit2 = seedAudit(11L, "Document Verification Audit", "Findings on document verification", Audit.AuditStatus.REVIEW);
+        seedAudit(6L, "Case Filing Audit", "Findings on case filing process", Audit.AuditStatus.OPEN);
+        seedAudit(11L, "Document Verification Audit", "Findings on document verification", Audit.AuditStatus.REVIEW);
 
         // Seed audit logs
         seedAuditLog(6L, "Started audit process", "Audit resource");
@@ -37,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
         seedComplianceRecord(2L, ComplianceRecord.ComplianceType.HEARING, ComplianceRecord.ComplianceResult.NON_COMPLIANT, "Hearing 2 needs review");
     }
 
-    private Audit seedAudit(Long officerId, String scope, String findings, Audit.AuditStatus status) {
+    private void seedAudit(Long officerId, String scope, String findings, Audit.AuditStatus status) {
         Audit a = Audit.builder()
                 .officerId(officerId)
                 .scope(scope)
@@ -46,16 +44,15 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
         auditRepo.save(a);
         log.info("Seeded audit: {}", scope);
-        return a;
     }
 
     private void seedAuditLog(Long userId, String action, String resource) {
-        AuditLog log = AuditLog.builder()
+        AuditLog auditLog = AuditLog.builder()
                 .userId(userId)
                 .action(action)
                 .resource(resource)
                 .build();
-        auditLogRepo.save(log);
+        auditLogRepo.save(auditLog);
         log.info("Seeded audit log: {} for {}", action, resource);
     }
 
