@@ -22,7 +22,6 @@ public interface CaseFeignClient {
     class CaseFeignFallback implements CaseFeignClient {
         @Override
         public void updateStatus(Long id, String status) {
-            // Log and continue — case status will need manual update
         }
 
         @Override

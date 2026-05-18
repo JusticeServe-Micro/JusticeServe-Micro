@@ -15,7 +15,6 @@ public interface AuditFeignClient {
     class AuditFeignFallback implements AuditFeignClient {
         @Override
         public void log(Long userId, String action, String resource) {
-            // Silently ignore — audit failure must not block main operation
         }
     }
 }

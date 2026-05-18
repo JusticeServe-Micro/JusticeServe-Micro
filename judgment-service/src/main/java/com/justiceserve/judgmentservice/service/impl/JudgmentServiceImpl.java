@@ -26,24 +26,6 @@ public class JudgmentServiceImpl implements JudgmentService {
     private final AuditFeignClient auditClient;
     private final CaseFeignClient caseClient;
 
-//    @Transactional
-//    public JudgmentResponse recordJudgment(JudgmentRequest req) {
-//        log.info("Recording judgment caseId={}", req.getCaseId());
-//        Judgment j = Judgment.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
-//                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
-//                .caseTitle(req.getCaseTitle()).summary(req.getSummary()).build();
-//        Judgment saved = judgmentRepo.save(j);
-//        try {
-//            caseClient.updateStatus(req.getCaseId(), "JUDGMENT_PENDING");
-//        } catch (Exception e) {
-//            log.warn("Case update failed: {}", e.getMessage());
-//        }
-//        audit(req.getJudgeId(), "JUDGMENT_RECORDED", "Judgment:" + saved.getJudgmentId() + " (DRAFT) Case:" + req.getCaseId());
-//        if (req.getCitizenUserId() != null)
-//            notify(req.getCitizenUserId(), saved.getJudgmentId(), "JUDGMENT", "A draft judgment was recorded for your case \"" + req.getCaseTitle() + "\"");
-//        return JudgmentResponse.from(saved);
-//    }
-
     @Transactional
     public JudgmentResponse recordJudgment(JudgmentRequest req) {
         log.info("Recording judgment caseId={}", req.getCaseId());
@@ -115,19 +97,6 @@ public class JudgmentServiceImpl implements JudgmentService {
         return JudgmentResponse.from(saved);
     }
 
-//    @Transactional
-//    public CourtOrderResponse issueOrder(CourtOrderRequest req) {
-//        CourtOrder o = CourtOrder.builder().caseId(req.getCaseId()).judgeId(req.getJudgeId())
-//                .citizenUserId(req.getCitizenUserId()).lawyerUserId(req.getLawyerUserId())
-//                .description(req.getDescription()).build();
-//        CourtOrder saved = orderRepo.save(o);
-//        audit(req.getJudgeId(), "COURT_ORDER_ISSUED", "CourtOrder:" + saved.getOrderId() + " Case:" + req.getCaseId());
-//        if (req.getCitizenUserId() != null)
-//            notify(req.getCitizenUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued for your case.");
-//        if (req.getLawyerUserId() != null)
-//            notify(req.getLawyerUserId(), saved.getOrderId(), "JUDGMENT", "Court Order #" + saved.getOrderId() + " issued.");
-//        return CourtOrderResponse.from(saved);
-//    }
 @Transactional
 public CourtOrderResponse issueOrder(CourtOrderRequest req) {
     // Check if case exists

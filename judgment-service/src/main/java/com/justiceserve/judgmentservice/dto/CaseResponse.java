@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 public class CaseResponse {
     private Long caseId;
     private Long citizenId;
-    private String citizenName;     // enriched via Feign, null if unavailable
+    private String citizenName;
     private Long lawyerId;
-    private String lawyerName;      // enriched via Feign, null if unavailable
+    private String lawyerName;
     private Long judgeId;
-    private String judgeName;       // enriched via Feign, null if unavailable
+    private String judgeName;
     private String title;
     private String description;
     private LocalDate filedDate;
